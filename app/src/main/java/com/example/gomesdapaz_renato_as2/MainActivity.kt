@@ -3,51 +3,128 @@ package com.example.gomesdapaz_renato_as2
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.layout.ContentScale
 import com.example.gomesdapaz_renato_as2.ui.theme.GomesdaPaz_Renato_AS2Theme
 
+data class Artwork(
+    val imageRes: Int,
+    val name: String,
+    val championships: String,
+    val championYears: String
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             GomesdaPaz_Renato_AS2Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    GomesdaPaz_Renato_AS2(modifier = Modifier.padding(innerPadding))
-                }
+                ArtSpaceApp()
             }
         }
     }
 }
 
 @Composable
-fun GomesdaPaz_Renato_AS2(modifier: Modifier = Modifier) {
-    var currentArtwork by remember { mutableStateOf(0) }
+fun ArtSpaceApp() {
+    val artworks = listOf(
+        Artwork(
+            R.drawable.emerson_fittipaldi,
+            "Emerson Fittipaldi",
+            "2× Formula One World Champion",
+            "1972 and 1974"
+        ),
+        Artwork(
+            R.drawable.nelson_piquet,
+            "Nelson Piquet",
+            "3× Formula One World Champion",
+            "1981, 1983, and 1987"
+        ),
+        Artwork(
+            R.drawable.ayrton_senna,
+            "Ayrton Senna",
+            "3× Formula One World Champion",
+            "1988, 1990, and 1991"
+        )
+    )
 
-    var artworks
-}
+    var currentArtworkIndex by remember { mutableStateOf(0) }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GomesdaPaz_Renato_AS2Theme {
-        Greeting("Android")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val currentArtwork = artworks[currentArtworkIndex]
+
+        Image(
+            painter = painterResource(id = currentArtwork.imageRes),
+            contentDescription = currentArtwork.name,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp),
+            contentScale = ContentScale.Fit
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = currentArtwork.name,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = currentArtwork.championships,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = currentArtwork.championYears,
+            fontSize = 16.sp
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Button(
+                onClick = {
+                    currentArtworkIndex = if (currentArtworkIndex > 0) {
+                        currentArtworkIndex - 1
+                    } else {
+                        artworks.size - 1
+                    }
+                }
+            ) {
+                Text(text = "Previous")
+            }
+
+            Button(
+                onClick = {
+                    currentArtworkIndex = (currentArtworkIndex + 1) % artworks.size
+                }
+            ) {
+                Text(text = "Next")
+            }
+        }
     }
 }
